@@ -1,61 +1,120 @@
-const fs=require('fs')
+// const fs=require('fs')
+const Tour = require('../model/tourModel')
 
 // console.log(typeof fs.readFileSync('./dev-data/data/tours-simple.json',"utf-8"))
-const tours=JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`,"utf-8"))
+// const tours=JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`,"utf-8"))
 
-const chekId=(req,res,next,val)=>{
-  if(val>tours.length){
-    return  res.status(201).json({
-      status:"success",
-      message:"topilmadi"
-    })
-  }
-  next()
-}
+// middleware
+// const chekId=(req,res,next,val)=>{
+//   if(val>tours.length){
+//     return  res.status(201).json({
+//       status:"success",
+//       message:"topilmadi"
+//     })
+//   }
+//   next()
+// }
+
+// const checkBody=(req,res,next)=>{
+//   if(!req.name || !req.price){
+//    return res.status(404).json({
+//      status:"fail",
+//      data:"Siz name bn price ni unitdingzi"
+//    })
+//   }
+//   next()
+// }
+
 
 /// get
-const getAllTour=(req,res)=>{
-  res.status(200).json({  // faylni json formatda qaytaradi
-    status:'success',
-    results:tours.length,
-    data:tours
-  })
-}
-// get id 
-const getIdTour=(req,res)=>{
-  const id=req.params.id;
-  const data=tours.find(val=>val.id==id)
-  if(data){
-      res.status(200).json({  // faylni json formatda qaytaradi
-      status:'success',
-      data:data
+const getAllTour=async (req,res)=>{
+  try{
+    const tour=await Tour.find()  // Tour.find({name:jamshid}) name faqat jamshid bo'lgan obektlarni olib keladi
+    res.status(200).json({
+      status:"success",
+      data:tour
+    })
+  } catch(err){
+    res.status(404).json({
+      status:"fail",
+      message:err.message
     })
   }
+}
+// get id 
+const getIdTour=async (req,res)=>{
+  try{
+    const data=await Tour.findById(req.params.id)
+
+    res.status(200).json({
+      status:"success",
+      data:data
+    })
+  } catch(err){
+    res.status(404).json({
+      status:"fail",
+      message:err.message
+    })
+  }
+
 }
 
 // post 
 
-const addTour=(req,res)=>{
-  const data=req.body;
-  const id=tours[tours.length-1].id+1;
-  const newTour=Object.assign({id:id},data)
-  tours.push(newTour);
-
-  fs.writeFile(`${__dirname}/../dev-data/data/tours-simple.json`,JSON.stringify(tours),err=>{
+const addTour=async (req,res)=>{
+  try{
+    const data=req.body;
+    const tour=await Tour.create(data)
+  
     res.status(201).json({
-      status:"success",
-      data:newTour
+      status:'success',
+      data:tour
     })
-  })
+  } catch(err){
+    res.status(404).json({
+      status:"fail",
+      message:err.message
+    })
+  }
+  
 }
 
 // patch
-const updateTour=(req,res)=>{
+const updateTour=async (req,res)=>{
+  try{
+    const data=await Tour.findByIdAndUpdate(req.params.id,req.body,{new:true});
+
+    res.status(200).json({
+      status:"success",
+      data:data,
+    })
+
+  } catch(err){
+    res.status(404).json({
+      status:"fail",
+      message:err.message
+    })
+  }
   
 }
 
 //delete
-const deleteTour=(req,res)=>{
+const deleteTour=async (req,res)=>{
+  try{
+    const data=await Tour.findByIdAndDelete(req.params.id)
+    res.status(200).json({
+      status:"success",
+      data:data,
+    })
+
+
+  } catch(err){
+    res.status(404).json({
+      status:"fail",
+      message:err.message
+    })
+  }
+  
 
 }
 
@@ -66,4 +125,4 @@ const deleteTour=(req,res)=>{
 // app.delete('/api/v1/tours/:id',deleteTour)
 // app.post("/api/v1/tours",addTour)
 
-module.exports={getAllTour,getIdTour,updateTour,deleteTour,addTour,chekId}
+module.exports={getAllTour,getIdTour,updateTour,deleteTour,addTour}
