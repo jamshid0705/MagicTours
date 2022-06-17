@@ -7,6 +7,6 @@ const userRouter=express.Router()
 // userRouter.param("id",User.chekId)
 
 userRouter.route('/').get(User.getAllUsers).post(User.addUsers)
-userRouter.route('/:id').get(User.updateUsers).patch(User.getIdUsers).delete(User.deleteUsers)
+userRouter.route('/:id').patch(User.updateUsers).get(User.getIdUsers).delete(User.deleteUsers)
 
 module.exports=userRouter

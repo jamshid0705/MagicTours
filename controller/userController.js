@@ -1,4 +1,7 @@
 const fs=require('fs')
+const User = require('../model/userModel')
+
+
 
 // console.log(typeof fs.readFileSync('./dev-data/data/tours-simple.json',"utf-8"))
 const users=JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/users.json`,"utf-8"))
@@ -14,61 +17,93 @@ const users=JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/users.json
 // }
 
 /// get
-const getAllUsers=(req,res)=>{
-  res.status(200).json({  // faylni json formatda qaytaradi
-    status:'success',
-    results:users.length,
-    data:users
-  })
+const getAllUsers=async (req,res)=>{
+  try{
+    const data=await User.find()
+    res.status(200).json({
+      status:"success",
+      data:data
+    })
+
+  } catch(err){
+    res.status(200).json({
+      status:"success",
+      data:err.message
+    })
+    
+  }
+
 }
 // get id 
-const getIdUsers=(req,res)=>{
-  const id=+req.params.id;
-  const data=users.find(val=>val.id===id)
-  if(data){
-      res.status(200).json({  // faylni json formatda qaytaradi
+const getIdUsers=async (req,res)=>{
+  try{
+    const data=await User.findById() 
+    res.status(200).json({
       status:'success',
       data:data
     })
+
+  } catch(err){
+    res.status(200).json({
+      status:"success",
+      data:err.message
+    })
+    
   }
 }
 
 // post 
 
-const addUsers=(req,res)=>{
-  const data=req.body;
-  const id=users[users.length-1].id+1;
-  const newUsers=Object.assign({id:id},data)
-  users.push(newUsers);
-  console.log(users)
-
-  fs.writeFile(`${__dirname}/../dev-data/data/users.json`,JSON.stringify(users),err=>{
-    res.status(201).json({
+const addUsers=async (req,res)=>{
+  try{
+    const data=await User.create(req.body)
+    res.status(200).json({
       status:"success",
-      data:newUsers
+      data:data
     })
-  })
-}
 
-// patch
-const updateUsers=(req,res)=>{
-  const id=req.params.id
-  if(id>users.length){
-    return  res.status(201).json({
+  } catch(err){
+    res.status(200).json({
       status:"success",
-      message:"topilmadi"
+      data:err.message
     })
+    
   }
 }
 
 //delete
-const deleteUsers=(req,res)=>{
-  const id=req.params.id
-  if(id>users.length){
-    return  res.status(201).json({
-      status:"success",
-      message:"topilmadi"
+const deleteUsers=async (req,res)=>{
+  try{
+    const data=await User.findByIdAndDelete(req.params.id)
+    res.status(200).json({
+      status:'success',
+      data:data
     })
+
+  }catch(err){
+    res.status(200).json({
+      status:"success",
+      data:err.message
+    })
+    
+  }
+ 
+}
+
+const updateUsers=async (req,res)=>{
+  try{
+    const data=await User.findByIdAndUpdate(req.params.id,req,body,{new:true})
+    res.status(200).json({
+      status:'success',
+      data:data
+    })
+
+  }catch(err){
+    res.status(200).json({
+      status:"success",
+      data:err.message
+    })
+    
   }
 }
 
