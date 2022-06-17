@@ -3,6 +3,16 @@ const fs=require('fs')
 // console.log(typeof fs.readFileSync('./dev-data/data/tours-simple.json',"utf-8"))
 const users=JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/users.json`,"utf-8"))
 
+// const chekId=(req,res,next,val)=>{
+//   if(users.length<val){
+//     return res.status(404).json({
+//       status:"fail",
+//       data:"Error message"
+//     })
+//   }
+//   next()
+// }
+
 /// get
 const getAllUsers=(req,res)=>{
   res.status(200).json({  // faylni json formatda qaytaradi
@@ -13,8 +23,8 @@ const getAllUsers=(req,res)=>{
 }
 // get id 
 const getIdUsers=(req,res)=>{
-  const id=req.params.id;
-  const data=users.find(val=>val.id==id)
+  const id=+req.params.id;
+  const data=users.find(val=>val.id===id)
   if(data){
       res.status(200).json({  // faylni json formatda qaytaradi
       status:'success',
@@ -30,8 +40,9 @@ const addUsers=(req,res)=>{
   const id=users[users.length-1].id+1;
   const newUsers=Object.assign({id:id},data)
   users.push(newUsers);
+  console.log(users)
 
-  fs.writeFile(`${__dirname}/../dev-data/data/tours-simple.json`,JSON.stringify(users),err=>{
+  fs.writeFile(`${__dirname}/../dev-data/data/users.json`,JSON.stringify(users),err=>{
     res.status(201).json({
       status:"success",
       data:newUsers
