@@ -13,6 +13,7 @@ mongoose.connect(data,{}).then(()=>{
 .catch((err)=>{
   console.log(err)
 })
+
 app.listen(+process.env.PORT,process.env.URL,()=>{
   console.log('ulandingiz')
 })
