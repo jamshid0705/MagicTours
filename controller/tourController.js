@@ -1,6 +1,8 @@
 // const fs=require('fs')
 const Tour = require('../model/tourModel')
 
+const FeatureApi=require('./../utility/featureApi')
+
 // console.log(typeof fs.readFileSync('./dev-data/data/tours-simple.json',"utf-8"))
 // const tours=JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`,"utf-8"))
 
@@ -29,10 +31,17 @@ const Tour = require('../model/tourModel')
 /// get
 const getAllTour=async (req,res)=>{
   try{
-    const tour=await Tour.find()  // Tour.find({name:jamshid}) name faqat jamshid bo'lgan obektlarni olib keladi
+
+    
+    
+   const query=new FeatureApi(req.query,Tour).filter().sort().field().page()
+   const tours= query.databaseQuery
+    const data=await tours
+
+    // Tour.find({name:jamshid}) name faqat jamshid bo'lgan obektlarni olib keladi
     res.status(200).json({
       status:"success",
-      data:tour
+      data:data
     })
   } catch(err){
     res.status(404).json({
@@ -41,6 +50,9 @@ const getAllTour=async (req,res)=>{
     })
   }
 }
+
+
+
 // get id 
 const getIdTour=async (req,res)=>{
   try{
@@ -118,11 +130,25 @@ const deleteTour=async (req,res)=>{
 
 }
 
-
+// aggregate
+const tourStatus=async (req,res)=>{
+  try{
+    const data=await Tour.aggregate([{$match:{duration:{$gte:10}}}])
+    res.status(200).json({
+      status:'success',
+      data:data
+    })
+  } catch(err){
+    res.status(404).json({
+      status:'fail',
+      data:err.message
+    })
+  }
+}
 // app.get('/api/v1/tours',getAllTour)
 // app.get("/api/v1/tours/:id",getIdTour)
 // app.patch('/api/v1/tours/:id',updateTour)
 // app.delete('/api/v1/tours/:id',deleteTour)
 // app.post("/api/v1/tours",addTour)
 
-module.exports={getAllTour,getIdTour,updateTour,deleteTour,addTour}
+module.exports={getAllTour,getIdTour,updateTour,deleteTour,addTour,tourStatus}
