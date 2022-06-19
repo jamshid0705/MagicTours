@@ -130,7 +130,7 @@ const deleteTour=async (req,res)=>{
 
 }
 
-// aggregate 
+/////////////////// aggregate /////////////////////////////////////////
 const tourStatus=async (req,res)=>{
   try{
     const data=await Tour.aggregate([
@@ -141,12 +141,9 @@ const tourStatus=async (req,res)=>{
       engArzonNarx:{$min:"$price"},
       engQimmatNarx:{$max:"$price"},
       ortachaReyting:{$avg:"$ratingsAverage"}
-    }},{
-      $sort:{engArzonNarx:-1}
-    },
-    {
-      $project:{_id:0}
-    }
+    }},
+    {$sort:{engArzonNarx:-1}},
+    {$project:{_id:0}}
     ])
     res.status(200).json({
       status:'success',
@@ -182,7 +179,6 @@ const tourReportYear=async (req,res)=>{
       {$sort:{tourlarSoni:-1}},
       {$limit:3}
     ])
-    console.log(1)
 
     res.status(200).json({
       status:'success',

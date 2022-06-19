@@ -1,37 +1,36 @@
-const fs=require('fs')
+// const fs=require('fs')
 const User = require('../model/userModel')
 
 
 
 // console.log(typeof fs.readFileSync('./dev-data/data/tours-simple.json',"utf-8"))
-const users=JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/users.json`,"utf-8"))
+// const users=JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/users.json`,"utf-8"))
 
-const chekId=(req,res,next,val)=>{
-  if(users.length<val){
-    return res.status(404).json({
-      status:"fail",
-      data:"Error message"
-    })
-  }
-  next()
-}
+// const chekId=(req,res,next,val)=>{
+//   if(users.length<val){
+//     return res.status(404).json({
+//       status:"fail",
+//       data:"Error message"
+//     })
+//   }
+//   next()
+// }
 
-const checkBody=(req,res,next)=>{
-  console.log(!req.body.name)
-  console.log(!req.body.surname)
-  console.log(!req.body.name || !req.body.surname)
-  if(!req.body.name || !req.body.surname){
-    res.status(404).json({
-      status:"success",
-      data:"Siz name yoki role unitdingiz !"
-    })
-  }
-  next()
-}
+// const checkBody=(req,res,next)=>{
+//   if(!req.body.name || !req.body.surname){
+//     res.status(404).json({
+//       status:"success",
+//       data:"Siz name yoki role unitdingiz !"
+//     })
+//   }
+//   next()
+// }
 
 /// get
 const getAllUsers=async (req,res)=>{
   try{
+
+    console.log(req.query)
     const data=await User.find()
     res.status(200).json({
       status:"success",
@@ -127,4 +126,4 @@ const updateUsers=async (req,res)=>{
 // app.delete('/api/v1/tours/:id',deleteTour)
 // app.post("/api/v1/tours",addTour)
 
-module.exports={getAllUsers,getIdUsers,updateUsers,deleteUsers,addUsers,chekId,checkBody}
+module.exports={getAllUsers,getIdUsers,updateUsers,deleteUsers,addUsers}
