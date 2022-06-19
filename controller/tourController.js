@@ -130,14 +130,67 @@ const deleteTour=async (req,res)=>{
 
 }
 
-// aggregate
+// aggregate 
 const tourStatus=async (req,res)=>{
   try{
-    const data=await Tour.aggregate([{$match:{duration:{$gte:10}}}])
+    const data=await Tour.aggregate([
+      {$match:{duration:{$gte:1}}},
+      {$group:{_id:"$difficulty",
+      numberTours:{$sum:1},
+      ortachaNarx:{$avg:'$price'},
+      engArzonNarx:{$min:"$price"},
+      engQimmatNarx:{$max:"$price"},
+      ortachaReyting:{$avg:"$ratingsAverage"}
+    }},{
+      $sort:{engArzonNarx:-1}
+    },
+    {
+      $project:{_id:0}
+    }
+    ])
     res.status(200).json({
       status:'success',
+      results:data.length,
       data:data
     })
+  } catch(err){
+    res.status(404).json({
+      status:'fail',
+      data:err.message
+    })
+  }
+}
+
+
+
+const tourReportYear=async (req,res)=>{
+  try{
+    const data=await Tour.aggregate([
+      {
+       $unwind:"$startDates",
+      },
+      {
+        $match:{startDates:{$gte:new Date(`${req.params.year}-01-01`),$lte:new Date(`${req.params.year}-12-31`)}}
+      },
+      {$group:{
+        _id:{$month:'$startDates'},
+        tourlarSoni:{$sum:1},
+        tourNomi:{$push:'$name'}
+      }},
+      {$addFields:{qaysiOyligi:'$_id'}},
+      {$project:{_id:0}},
+      {$sort:{tourlarSoni:-1}},
+      {$limit:3}
+    ])
+    console.log(1)
+
+    res.status(200).json({
+      status:'success',
+      results:data.length,
+      data:data
+    })
+
+
   } catch(err){
     res.status(404).json({
       status:'fail',
@@ -151,4 +204,4 @@ const tourStatus=async (req,res)=>{
 // app.delete('/api/v1/tours/:id',deleteTour)
 // app.post("/api/v1/tours",addTour)
 
-module.exports={getAllTour,getIdTour,updateTour,deleteTour,addTour,tourStatus}
+module.exports={getAllTour,getIdTour,updateTour,deleteTour,addTour,tourStatus,tourReportYear}
