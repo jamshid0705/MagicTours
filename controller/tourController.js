@@ -143,7 +143,7 @@ const tourStatus=async (req,res)=>{
       ortachaReyting:{$avg:"$ratingsAverage"}
     }},
     {$sort:{engArzonNarx:-1}},
-    {$project:{_id:0}}
+    {$project:{_id:0}}  // olib tashlash un
     ])
     res.status(200).json({
       status:'success',
