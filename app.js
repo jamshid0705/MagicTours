@@ -4,6 +4,8 @@ const userRouter=require('./router/userRouter')
 
 const app=express();
 
+const appError=require('./utility/appError')
+
 
 // midleware
 app.use(express.json())
@@ -14,11 +16,24 @@ app.use('/api/v1/tours',tourRouter)
 app.use('/api/v1/users',userRouter)  // middleware
 
 app.all('*',function(req,res,next){
-  res.status(404).json({
-    status:'success',
-    results:"Mavjud bolmagan rout kiritdingiz ... !!!"
-  })
+ 
+ next(new appError(`This is page not found ${req.originalUrl}`,404 ))
 })
 
+
+//////////////// Error middleware /////////////////////////
+
+app.use((err,req,res,next)=>{
+   err.statusCode=err.statusCode || 404,
+   err.status=err.status || 'fail',
+   err.message=err.message || "not found"
+
+   res.status(err.statusCode).json({
+    status:err.status,
+    data:err.message
+   })
+
+   next()
+})
 module.exports=app
 // console.log(process.env)
