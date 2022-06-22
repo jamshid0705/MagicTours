@@ -30,7 +30,9 @@ app.use((err,req,res,next)=>{
 
    res.status(err.statusCode).json({
     status:err.status,
-    data:err.message
+    statusCode:err.statusCode,
+    data:err.message,
+    stack:err.stack
    })
 
    next()

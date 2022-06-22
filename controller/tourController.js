@@ -3,6 +3,8 @@ const Tour = require('../model/tourModel')
 
 const FeatureApi=require('./../utility/featureApi')
 
+const appError=require('../utility/appError')
+
 // console.log(typeof fs.readFileSync('./dev-data/data/tours-simple.json',"utf-8"))
 // const tours=JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`,"utf-8"))
 
@@ -29,11 +31,20 @@ const FeatureApi=require('./../utility/featureApi')
 
 
 /// get
-const getAllTour=async (req,res)=>{
-  try{
 
-    
-    
+const catchError=function(funksiya){
+  const middleFunc=(req,res,next)=>{
+    funksiya(req,res).catch(err=>next(new appError(err.message,404)))
+  }
+  return middleFunc
+}
+
+
+
+
+
+const getAllTour=catchError(async (req,res)=>{
+  
    const query=new FeatureApi(req.query,Tour).filter().sort().field().page()
    const tours= query.databaseQuery
     const data=await tours
@@ -41,15 +52,11 @@ const getAllTour=async (req,res)=>{
     // Tour.find({name:jamshid}) name faqat jamshid bo'lgan obektlarni olib keladi
     res.status(200).json({
       status:"success",
-      data:data
+      data:data1
     })
-  } catch(err){
-    res.status(404).json({
-      status:"fail",
-      message:err.message
-    })
-  }
+  
 }
+)
 
 
 

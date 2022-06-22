@@ -90,7 +90,7 @@ tourSchema.pre('find',function(next){
 
 tourSchema.post('find',function(doc,next){
   // this.find({price:{$lte:400}})
-  console.log(doc)
+  // console.log(doc)
   next()
 })
 
