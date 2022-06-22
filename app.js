@@ -5,6 +5,7 @@ const userRouter=require('./router/userRouter')
 const app=express();
 
 const appError=require('./utility/appError')
+const appErrorController=require('./controller/appErrorController')
 
 
 // midleware
@@ -23,19 +24,6 @@ app.all('*',function(req,res,next){
 
 //////////////// Error middleware /////////////////////////
 
-app.use((err,req,res,next)=>{
-   err.statusCode=err.statusCode || 404,
-   err.status=err.status || 'fail',
-   err.message=err.message || "not found"
-
-   res.status(err.statusCode).json({
-    status:err.status,
-    statusCode:err.statusCode,
-    data:err.message,
-    stack:err.stack
-   })
-
-   next()
-})
+app.use(appErrorController)
 module.exports=app
 // console.log(process.env)

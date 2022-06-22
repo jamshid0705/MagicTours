@@ -3,7 +3,7 @@ const Tour = require('../model/tourModel')
 
 const FeatureApi=require('./../utility/featureApi')
 
-const appError=require('../utility/appError')
+const catchError=require('../utility/catchError')
 
 // console.log(typeof fs.readFileSync('./dev-data/data/tours-simple.json',"utf-8"))
 // const tours=JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`,"utf-8"))
@@ -32,12 +32,7 @@ const appError=require('../utility/appError')
 
 /// get
 
-const catchError=function(funksiya){
-  const middleFunc=(req,res,next)=>{
-    funksiya(req,res).catch(err=>next(new appError(err.message,404)))
-  }
-  return middleFunc
-}
+
 
 
 
@@ -52,7 +47,7 @@ const getAllTour=catchError(async (req,res)=>{
     // Tour.find({name:jamshid}) name faqat jamshid bo'lgan obektlarni olib keladi
     res.status(200).json({
       status:"success",
-      data:data1
+      data:data
     })
   
 }
@@ -61,27 +56,24 @@ const getAllTour=catchError(async (req,res)=>{
 
 
 // get id 
-const getIdTour=async (req,res)=>{
-  try{
+const getIdTour=catchError(async (req,res)=>{
+  
     const data=await Tour.findById(req.params.id)
-
+    if(!data){
+      throw new Error('Bunaqa id lik malumot topilmadi ... ')
+    }
     res.status(200).json({
       status:"success",
       data:data
     })
-  } catch(err){
-    res.status(404).json({
-      status:"fail",
-      message:err.message
-    })
-  }
+ 
 
-}
+})
 
 // post 
 
-const addTour=async (req,res)=>{
-  try{
+const addTour=catchError(async (req,res)=>{
+  
     const data=req.body;
     const tour=await Tour.create(data)
   
@@ -89,18 +81,13 @@ const addTour=async (req,res)=>{
       status:'success',
       data:tour
     })
-  } catch(err){
-    res.status(404).json({
-      status:"fail",
-      message:err.message
-    })
-  }
   
-}
+  
+})
 
 // patch
-const updateTour=async (req,res)=>{
-  try{
+const updateTour=catchError(async (req,res)=>{
+  
     const data=await Tour.findByIdAndUpdate(req.params.id,req.body,{new:true});
 
     res.status(200).json({
@@ -108,38 +95,27 @@ const updateTour=async (req,res)=>{
       data:data,
     })
 
-  } catch(err){
-    res.status(404).json({
-      status:"fail",
-      message:err.message
-    })
-  }
+ 
   
-}
+})
 
 //delete
-const deleteTour=async (req,res)=>{
-  try{
+const deleteTour=catchError(async (req,res)=>{
+  
     const data=await Tour.findByIdAndDelete(req.params.id)
+    if(!data){
+      throw new Error('Bunaqa id lik malumot topilmadi ... ')
+    }
     res.status(200).json({
       status:"success",
       data:data,
     })
 
-
-  } catch(err){
-    res.status(404).json({
-      status:"fail",
-      message:err.message
-    })
-  }
-  
-
-}
+})
 
 /////////////////// aggregate /////////////////////////////////////////
-const tourStatus=async (req,res)=>{
-  try{
+const tourStatus=catchError(async (req,res)=>{
+  
     const data=await Tour.aggregate([
       {$match:{duration:{$gte:1}}},
       {$group:{_id:"$difficulty",
@@ -157,18 +133,13 @@ const tourStatus=async (req,res)=>{
       results:data.length,
       data:data
     })
-  } catch(err){
-    res.status(404).json({
-      status:'fail',
-      data:err.message
-    })
-  }
-}
+  
+})
 
 
 
-const tourReportYear=async (req,res)=>{
-  try{
+const tourReportYear=catchError(async (req,res)=>{
+  
     const data=await Tour.aggregate([
       {
        $unwind:"$startDates",
@@ -194,13 +165,8 @@ const tourReportYear=async (req,res)=>{
     })
 
 
-  } catch(err){
-    res.status(404).json({
-      status:'fail',
-      data:err.message
-    })
-  }
-}
+ 
+})
 // app.get('/api/v1/tours',getAllTour)
 // app.get("/api/v1/tours/:id",getIdTour)
 // app.patch('/api/v1/tours/:id',updateTour)
