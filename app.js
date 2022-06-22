@@ -13,5 +13,12 @@ app.use(express.static('public'))  // html fayllarini oqish un
 app.use('/api/v1/tours',tourRouter)
 app.use('/api/v1/users',userRouter)  // middleware
 
+app.all('*',function(req,res,next){
+  res.status(404).json({
+    status:'success',
+    results:"Mavjud bolmagan rout kiritdingiz ... !!!"
+  })
+})
+
 module.exports=app
 // console.log(process.env)
