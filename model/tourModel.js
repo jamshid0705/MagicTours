@@ -26,7 +26,7 @@ const tourSchema=new mongoose.Schema({
     type: String,
     required: true,
 
-    enum:{values:['difficulty','easy','medium'],message:'Siz mavjud bolmagan qiymat kiritdingiz'}
+    enum:{values:['difficult','easy','medium'],message:'Siz mavjud bolmagan qiymat kiritdingiz'}
   },
   ratingsAverage: {
     type: Number,
