@@ -6,5 +6,6 @@ class AppError extends Error{
   }
   
 }
+console.log(Error)
 
 module.exports=AppError
