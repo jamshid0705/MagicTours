@@ -1,34 +1,54 @@
-const mongoose=require('mongoose');
+const mongoose=require('mongoose')
+const validator=require('validator')
+const bcrypt=require('bcrypt')
 
-const userSchema=new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Siz nameni kiritishingiz shart'],
-    unique: true,
-    trim: true,
+const UserSchema=new mongoose.Schema({
+  name:{
+    type:String,
+    required:[true,'Siz kirtishingiz shart'],
+    trim:true,
   },
-  email: {
-    type: String,
-    required: [true, 'Siz email kiritishingiz shart'], 
+  email:{
+    type:String,
+    required:[true,'Siz email kiriting'],
+    lowercase:true,
+    unique:true,
+    validate:{validator:function(val){
+      return validator.isEmail(val)
+    },message:'Siz togri email kiriting'}
   },
-  role: {
-    type: String,
-    required: [true, 'Siz role kiritishingiz shart'],
+  password:{
+    type:String,
+    required:[true,'Siz password kiriting'],
+    minlength:[8,'8tadan kam bolmasligi kk'],
+    validate:{validator:function(val){
+      return validator.isStrongPassword(val)
+    },message:"Siz kuchliroq parol kiriting"}
   },
-  active: {
-    type: Boolean,
-    required: [true, 'Siz active kiritishingiz shart'],
-  },
-  photo: {
-    type: String,
-    required: [true, 'Siz photo kiritishingiz shart'],
-  },
-  password: {
-    type: String,
-    required: [true, 'Siz password kiritishingiz shart'],
-  },
+  passwordConfirm:{
+    type:String,
+    required:[true,'Siz password kiriting'],
+    minlength:[8,'8tadan kam bolmasligi kk'],
+    validate:{validator:function(val){
+      return this.password==val
+    },message:"Siz bir xil parol kiriting"} 
+  }
+
 })
 
-const User=mongoose.model("users",userSchema);
+UserSchema.pre('save',async function(next){
+  if(!this.isModified('password')){
+    return next()
+  }
+
+  const hashpassword=await bcrypt.hash(this.password,13)
+  this.password=hashpassword,
+  this.passwordConfirm=undefined
+
+  next()
+})
+
+
+const User=mongoose.model('users',UserSchema)
 
 module.exports=User

@@ -15,27 +15,22 @@ const data=mongoose.connect('mongodb+srv://jamshid:jam0705@startmagic.vevoy.mong
  })
 
  const addJson=async ()=>{
-  try{
+  
     await Tour.create(tour)
     await User.create(user)
     console.log("Databasega malumotlar saqlandi ")
 
-  }catch(err){
-    console.log(err)
-  }
+ 
  }
 
  const deleteJson=async ()=>{
-  try{
+  
     await Tour.deleteMany()
     await User.deleteMany()
     console.log("Database tozalandi ..")
     process.exit()
-  } catch(err){
-    console.log(err)
-  }
+  
  }
-
  if(process.argv[2]==='--add'){
   addJson()
  }

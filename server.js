@@ -18,4 +18,9 @@ app.listen(+process.env.PORT,process.env.URL,()=>{
   console.log('ulandingiz')
 })
 
+// rejection
+process.on('unhandledRejection',err=>{
+  console.log("Error: ",err.name,"Error message: ",err.message)
+})
+
 // schema
