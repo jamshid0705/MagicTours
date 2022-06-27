@@ -17,6 +17,11 @@ const UserSchema=new mongoose.Schema({
       return validator.isEmail(val)
     },message:'Siz togri email kiriting'}
   },
+  role:{
+    type:String,
+    enum:['user','guide','team-lead','admin'],
+    default:'user',
+  },
   password:{
     type:String,
     required:[true,'Siz password kiriting'],

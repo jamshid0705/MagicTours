@@ -7,6 +7,18 @@ const tourRouter = require('./router/tourRouter')
 
 const data=process.env.DATABASE.replace("<password>",process.env.DATABASE_PASSWORD)
 
+
+// rejection
+process.on('unhandledRejection',err=>{
+  console.log("Error: ",err.name,"Error message: ",err.message)
+})
+// expections
+process.on('uncaughtException',(err)=>{
+  console.log("Error: ",err.name,"Error message: ",err.message)
+})
+
+
+console.log('assds')
 mongoose.connect(data,{}).then(()=>{
   console.log("Databasega ulandi")
 })
@@ -18,9 +30,5 @@ app.listen(+process.env.PORT,process.env.URL,()=>{
   console.log('ulandingiz')
 })
 
-// rejection
-process.on('unhandledRejection',err=>{
-  console.log("Error: ",err.name,"Error message: ",err.message)
-})
 
 // schema
