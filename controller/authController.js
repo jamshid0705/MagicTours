@@ -9,6 +9,14 @@ const createToken=(id)=>{
   return jwt.sign({id},process.env.JWT_SECRET,{expiresIn:process.env.JWT_EXPIRES_IN})
 }
 
+const getAllUser=catchError(async(req,res)=>{
+   const data=await User.find()
+
+   res.status(200).json({
+      status:'success',
+      data:data
+   })
+})
 const signup=catchError(async (req,res)=>{
    const user=await User.create({
       name:req.body.name,
@@ -45,7 +53,7 @@ const login=catchError(async(req,res,next)=>{
    const tekshirishHashga=async(oddiy,hashlangan)=>{
       return await bcrypt.compare(oddiy,hashlangan);
    }
-   if(!tekshirishHashga){
+   if(!(await tekshirishHashga(password,user.password))){
      return next(new AppError('Sizning parolingiz xato! Iltimos qayta urinib koring',401))
    }
    //4 JWT token berish
@@ -58,4 +66,23 @@ const login=catchError(async(req,res,next)=>{
    })
 })
 
-module.exports={signup,login}
+
+//////////// middleware
+
+const protect=catchError(async (req,res,next)=>{
+   // 1 token bor yoqligini tekshirish
+   let token;
+   if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
+      token=req.headers.authorization.split(' ')[1]
+   }
+   if(!token){
+      return next(new AppError('Siz royhatdan otishingiz kk. Bunday user mavjud emas'))
+   }
+   // 2 token ni tekshirish Serverniki bn Clientnikini tekshirish
+
+   // 3 token 
+   console.log(req.headers)
+   next()
+})
+
+module.exports={signup,login,getAllUser}

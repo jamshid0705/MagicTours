@@ -18,7 +18,6 @@ process.on('uncaughtException',(err)=>{
 })
 
 
-console.log('assds')
 mongoose.connect(data,{}).then(()=>{
   console.log("Databasega ulandi")
 })
