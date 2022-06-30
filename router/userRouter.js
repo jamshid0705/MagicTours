@@ -6,7 +6,7 @@ const auth=require('../controller/authController')
 const userRouter=express.Router()
 
 // userRouter.param("id",User.chekId)  // middleware
-userRouter.route('/signup').post(auth.signup).post(auth.login)
+userRouter.route('/signup').post(auth.signup)
 userRouter.route('/signin').post(auth.login)
 
 userRouter.route('/').get(User.getAllUsers).post(User.addUsers).get(auth.getAllUser)

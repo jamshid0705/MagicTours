@@ -5,10 +5,13 @@ const jwt=require('jsonwebtoken')
 const AppError = require('../utility/appError')
 const bcrypt=require('bcrypt')
 
+
+/////////// create token ///////////////
 const createToken=(id)=>{
   return jwt.sign({id},process.env.JWT_SECRET,{expiresIn:process.env.JWT_EXPIRES_IN})
 }
 
+////// find get ALL user ///////
 const getAllUser=catchError(async(req,res)=>{
    const data=await User.find()
 
@@ -17,6 +20,8 @@ const getAllUser=catchError(async(req,res)=>{
       data:data
    })
 })
+
+///// create add user ////////////
 const signup=catchError(async (req,res)=>{
    const user=await User.create({
       name:req.body.name,
@@ -67,21 +72,25 @@ const login=catchError(async(req,res,next)=>{
 })
 
 
-//////////// middleware
+//////////// middleware //////////////
 
 const protect=catchError(async (req,res,next)=>{
    // 1 token bor yoqligini tekshirish
    let token;
    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
+      console.log(req.headers.authorization)
       token=req.headers.authorization.split(' ')[1]
+      console.log(token)
    }
    if(!token){
-      return next(new AppError('Siz royhatdan otishingiz kk. Bunday user mavjud emas'))
+      return next(new AppError('Siz royhatdan otishingiz kk. Bunday user mavjud emas !'))
    }
    // 2 token ni tekshirish Serverniki bn Clientnikini tekshirish
 
+   const tokencha=jwt.verify(token,process.env.JWT_SECRET)
+
    // 3 token 
-   console.log(req.headers)
+   
    next()
 })
 
