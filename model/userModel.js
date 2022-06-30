@@ -37,6 +37,10 @@ const UserSchema=new mongoose.Schema({
     validate:{validator:function(val){
       return this.password==val
     },message:"Siz bir xil parol kiriting"} 
+  },
+  passwordChangedDate:{
+    type:Date,
+    default:null
   }
 
 })

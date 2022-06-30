@@ -26,8 +26,10 @@ const signup=catchError(async (req,res)=>{
    const user=await User.create({
       name:req.body.name,
       email:req.body.email,
+      role:req.body.role,
       password:req.body.password,
-      passwordConfirm:req.body.passwordConfirm
+      passwordConfirm:req.body.passwordConfirm,
+      passwordChangedDate:req.body.passwordChangedDate
    })
 
   const token=createToken(user._id)
@@ -78,9 +80,9 @@ const protect=catchError(async (req,res,next)=>{
    // 1 token bor yoqligini tekshirish
    let token;
    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
-      console.log(req.headers.authorization)
+      // console.log(req.headers.authorization)
       token=req.headers.authorization.split(' ')[1]
-      console.log(token)
+      // console.log(token)
    }
    if(!token){
       return next(new AppError('Siz royhatdan otishingiz kk. Bunday user mavjud emas !'))
@@ -89,9 +91,26 @@ const protect=catchError(async (req,res,next)=>{
 
    const tokencha=jwt.verify(token,process.env.JWT_SECRET)
 
-   // 3 token 
+   // 3 token ichidan idni olib databasedagi id bn tekshirish
+
+   console.log(tokencha)
+   const user=await User.findOne({_id:tokencha.id})
+   console.log(user)
+   if(!user){
+      return next(new AppError('Bunday user mavjud emas iltimos ro\'yhatdan o\'tin !'))
+   }
+
+   // 4 agar parol o'zgargan bo'lsa tokenning amal qilmasligini tekshirish
+
+   if(user.passwordChangedDate){
+      if(user.passwordChangedDate.getTime()/1000>tokencha.iat){
+         return next(new AppError('Sizning tokeningiz yaroqsiz. Iltimos yangi token bn kiring !'))
+      }
+   }
+
+
    
    next()
 })
 
-module.exports={signup,login,getAllUser}
+module.exports={signup,login,getAllUser,protect}
