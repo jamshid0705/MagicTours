@@ -108,7 +108,9 @@ const protect=catchError(async (req,res,next)=>{
 
    // 4 agar parol o'zgargan bo'lsa tokenning amal qilmasligini tekshirish
 
-   if(user.passwordChangedDate){
+   if(user.passwordChangedDate){ 
+      console.log(tokencha.iat)
+      console.log(user.passwordChangedDate.getTime()/1000)
       if(user.passwordChangedDate.getTime()/1000>tokencha.iat){
          return next(new AppError('Sizning tokeningiz yaroqsiz. Iltimos yangi token bn kiring !',404))
       }

@@ -40,7 +40,7 @@ const UserSchema=new mongoose.Schema({
   },
   passwordChangedDate:{
     type:Date,
-    default:null
+    default:new Date()
   }
 
 })
