@@ -10,6 +10,6 @@ userRouter.route('/signup').post(auth.signup)
 userRouter.route('/signin').post(auth.login)
 
 userRouter.route('/').get(auth.protect,User.getAllUsers).post(auth.protect,User.addUsers)
-userRouter.route('/:id').patch(auth.protect,User.updateUsers).get(auth.protect,User.getIdUsers).delete(auth.protect,User.deleteUsers)
+userRouter.route('/:id').patch(auth.protect,User.updateUsers).get(auth.protect,User.getIdUsers).delete(auth.protect,auth.role(['admin']),User.deleteUsers)
 
 module.exports=userRouter

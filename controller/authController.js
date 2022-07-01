@@ -22,6 +22,9 @@ const createToken=(id)=>{
 // })
 
 ///// create add user ////////////
+
+//////////////// sign up ////////////////
+
 const signup=catchError(async (req,res)=>{
    const user=await User.create({
       name:req.body.name,
@@ -43,6 +46,9 @@ const signup=catchError(async (req,res)=>{
 
 
 })
+
+
+///////////////////// SIGN IN //////////////////////
 
 const login=catchError(async(req,res,next)=>{
    //1 email bilan password borligini kiriting
@@ -85,7 +91,7 @@ const protect=catchError(async (req,res,next)=>{
       // console.log(token)
    }
    if(!token){
-      return next(new AppError('Siz royhatdan otishingiz kk. Bunday user mavjud emas !'))
+      return next(new AppError('Siz royhatdan otishingiz kk. Bunday user mavjud emas !',404))
    }
    // 2 token ni tekshirish Serverniki bn Clientnikini tekshirish
 
@@ -93,18 +99,18 @@ const protect=catchError(async (req,res,next)=>{
 
    // 3 token ichidan idni olib databasedagi id bn tekshirish
 
-   console.log(tokencha)
+   // console.log(tokencha)
    const user=await User.findOne({_id:tokencha.id})
    console.log(user)
    if(!user){
-      return next(new AppError('Bunday user mavjud emas iltimos ro\'yhatdan o\'tin !'))
+      return next(new AppError('Bunday user mavjud emas iltimos ro\'yhatdan o\'tin !',404))
    }
 
    // 4 agar parol o'zgargan bo'lsa tokenning amal qilmasligini tekshirish
 
    if(user.passwordChangedDate){
       if(user.passwordChangedDate.getTime()/1000>tokencha.iat){
-         return next(new AppError('Sizning tokeningiz yaroqsiz. Iltimos yangi token bn kiring !'))
+         return next(new AppError('Sizning tokeningiz yaroqsiz. Iltimos yangi token bn kiring !',404))
       }
    }
 
@@ -114,4 +120,15 @@ const protect=catchError(async (req,res,next)=>{
    next()
 })
 
-module.exports={signup,login,protect}
+///////////// role ////////////////
+
+const role=(roles)=>{
+   return catchError(async(req,res,next)=>{
+      if(!roles.includes(req.user.role)){
+         return next(new AppError('Siz kirish huquqiga ega emassiz !',404))
+      }
+      next()
+   })
+}
+
+module.exports={signup,login,protect,role}
