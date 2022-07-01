@@ -9,7 +9,7 @@ const userRouter=express.Router()
 userRouter.route('/signup').post(auth.signup)
 userRouter.route('/signin').post(auth.login)
 
-userRouter.route('/').get(auth.protect,User.getAllUsers).post(User.addUsers).get(auth.getAllUser)
-userRouter.route('/:id').patch(User.updateUsers).get(User.getIdUsers).delete(User.deleteUsers)
+userRouter.route('/').get(auth.protect,User.getAllUsers).post(auth.protect,User.addUsers)
+userRouter.route('/:id').patch(auth.protect,User.updateUsers).get(auth.protect,User.getIdUsers).delete(auth.protect,User.deleteUsers)
 
 module.exports=userRouter

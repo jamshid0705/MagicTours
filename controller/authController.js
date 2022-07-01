@@ -11,15 +11,15 @@ const createToken=(id)=>{
   return jwt.sign({id},process.env.JWT_SECRET,{expiresIn:process.env.JWT_EXPIRES_IN})
 }
 
-////// find get ALL user ///////
-const getAllUser=catchError(async(req,res)=>{
-   const data=await User.find()
+// ////// find get ALL user ///////
+// const getAllUser=catchError(async(req,res)=>{
+//    const data=await User.find()
 
-   res.status(200).json({
-      status:'success',
-      data:data
-   })
-})
+//    res.status(200).json({
+//       status:'success',
+//       data:data
+//    })
+// })
 
 ///// create add user ////////////
 const signup=catchError(async (req,res)=>{
@@ -109,8 +109,9 @@ const protect=catchError(async (req,res,next)=>{
    }
 
 
+   req.user=user
    
    next()
 })
 
-module.exports={signup,login,getAllUser,protect}
+module.exports={signup,login,protect}
