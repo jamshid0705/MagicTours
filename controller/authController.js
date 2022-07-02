@@ -122,7 +122,7 @@ const protect=catchError(async (req,res,next)=>{
    next()
 })
 
-///////////// role ////////////////
+///////////// role /////////////////
 
 const role=(roles)=>{
    return catchError(async(req,res,next)=>{
