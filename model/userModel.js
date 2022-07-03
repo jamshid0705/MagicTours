@@ -1,6 +1,7 @@
 const mongoose=require('mongoose')
 const validator=require('validator')
 const bcrypt=require('bcrypt')
+const crypto=require('crypto')
 
 const UserSchema=new mongoose.Schema({
   name:{
@@ -41,9 +42,13 @@ const UserSchema=new mongoose.Schema({
   passwordChangedDate:{
     type:Date,
     default:new Date()
-  }
+  },
+  resetTokenHash:String,
+  resetTokenVaqt:String,
 
 })
+
+/////////////// password save middleware ///////////
 
 UserSchema.pre('save',async function(next){
   if(!this.isModified('password')){
@@ -57,6 +62,19 @@ UserSchema.pre('save',async function(next){
   next()
 })
 
+//////////////////// reset token /////////////////
+
+UserSchema.methods.resetHashToken=function(){
+  const token=crypto.randomBytes(32).toString('hex')
+
+  const tokenHash=crypto.createHash('sha256').update(token).digest('hex')
+
+  this.resetTokenHash=tokenHash
+  this.resetTokenVaqt=Date.now()+10*60*1000;
+
+  return token;
+
+}
 
 const User=mongoose.model('users',UserSchema)
 

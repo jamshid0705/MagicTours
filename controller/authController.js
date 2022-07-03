@@ -4,6 +4,7 @@ const User=require('../model/userModel')
 const jwt=require('jsonwebtoken')
 const AppError = require('../utility/appError')
 const bcrypt=require('bcrypt')
+const mail=require('./../utility/mail')
 
 
 /////////// create token ///////////////
@@ -133,4 +134,45 @@ const role=(roles)=>{
    })
 }
 
-module.exports={signup,login,protect,role}
+
+///////////////// forgot Password ///////////////// Agar user parolini unitgan bo'lsa . Email orqali kirib parolini yangilash
+
+const forgotPassword=catchError(async(req,res,next)=>{
+   //1 email bor yoqligini tekshiramiz
+
+   if(!req.body.email){
+      return next(new AppError('Siz email kiritishingiz shart',404))
+   }
+   //2 emailli user bor yoqligini tekshiramiz
+
+   const user=await User.findOne({email:req.body.email})
+
+   if(!user){
+      return next(new AppError('Bunday email mavjud emas iltimos email kiriting !',404))
+   }
+
+   //3 yangi tokencha yaratamiz
+   const token=user.resetHashToken()
+
+
+   await user.save({validateBeforeSave:false})
+
+   //4 emailga jo'natamiz tokenchani
+
+   const resetLink=`${req.protocol}://${req.get('host')}/api/v1/resentpassword/${token}`
+   const subject="Reset password qilish uchun link !"
+   const html=`<h2>Reset password qilish uchun quyidagi tugmani bosing 👉<a style='color:red' href=${resetLink}>Reset Link</a></h2>`
+   const to='jamshidxatamov0705@gmail.com'
+
+
+   await mail({to,subject,html})
+
+   res.status(200).json({
+      status:'success',
+      data:true
+   })
+
+   next()
+})
+
+module.exports={signup,login,protect,role,forgotPassword}
