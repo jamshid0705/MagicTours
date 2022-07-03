@@ -5,6 +5,7 @@ const jwt=require('jsonwebtoken')
 const AppError = require('../utility/appError')
 const bcrypt=require('bcrypt')
 const mail=require('./../utility/mail')
+const crypto=require('crypto')
 
 
 /////////// create token ///////////////
@@ -175,4 +176,54 @@ const forgotPassword=catchError(async(req,res,next)=>{
    next()
 })
 
-module.exports={signup,login,protect,role,forgotPassword}
+///////////////// Reset Token ////////////////
+
+const resentpassword=catchError(async (req,res,next)=>{
+   // 1 token olamiz
+   const token =req.params.token
+   const tokenHash=crypto.createHash('sha256').update(token).digest('hax')
+
+   // 2 token to'g'ri noto'g'riligini va vaqti o'tib ketmaganligini tekshiradi
+   const user=await User.findOne({
+      resetTokenHash:tokenHash,
+      resetTokenVaqt:{$gt:Date.now()}
+   })
+
+   if(!user){
+      user.resetTokenHash=undefined
+      user.resetTokenVaqt=undefined
+
+      return next(new AppError('Token xato !',404))
+   }
+   // 3 yangi passwordni saqlaymiz
+
+   if(!req.body.password || !req.body.passwordConfirm){
+      return next(new AppError('Password yoki passwordConfirm kiritilmagan',404))
+   }
+
+   if(!(req.body.password===req.body.passwordConfirm)){
+      return next(new AppError('Siz bir xil parol kiritishingiz kerak',404))
+   }
+
+   user.password=req.body.password
+   user.passwordConfirm=req.body.passwordConfirm
+   user.passwordChangedDate=Date.now()
+
+   user.resetTokenHash=undefined
+   user.resetTokenVaqt=undefined
+
+   await user.save()
+
+   // 4 JWT token berish yangi
+   const tokenJWT=createToken(user._id)
+
+   res.status(200).json({
+      status:'success',
+      token:tokenJWT
+   })
+
+   next()
+
+})
+
+module.exports={signup,login,protect,role,forgotPassword,resentpassword}
