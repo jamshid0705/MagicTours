@@ -9,7 +9,7 @@ const userRouter=express.Router()
 userRouter.route('/signup').post(auth.signup)
 userRouter.route('/signin').post(auth.login)
 
-userRouter.route('/forgotpassword').post(auth.forgotPassword)
+userRouter.route('/forgotpassword').post(auth.forgotpassword)
 userRouter.route('/resentpassword/:token').post(auth.resentpassword)
 
 userRouter.route('/').get(auth.protect,User.getAllUsers).post(auth.protect,User.addUsers)

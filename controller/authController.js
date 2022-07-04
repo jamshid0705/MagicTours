@@ -138,7 +138,7 @@ const role=(roles)=>{
 
 ///////////////// forgot Password ///////////////// Agar user parolini unitgan bo'lsa . Email orqali kirib parolini yangilash
 
-const forgotPassword=catchError(async(req,res,next)=>{
+const forgotpassword=catchError(async(req,res,next)=>{
    //1 email bor yoqligini tekshiramiz
 
    if(!req.body.email){
@@ -155,22 +155,22 @@ const forgotPassword=catchError(async(req,res,next)=>{
    //3 yangi tokencha yaratamiz
    const token=user.resetHashToken()
 
-
+   console.log('222222',token)
    await user.save({validateBeforeSave:false})
 
    //4 emailga jo'natamiz tokenchani
 
-   const resetLink=`${req.protocol}://${req.get('host')}/api/v1/resentpassword/${token}`
+   const resetLink=`${req.protocol}://${req.get('host')}/api/v1/users/resentpassword/${token}`
    const subject="Reset password qilish uchun link !"
    const html=`<h2>Reset password qilish uchun quyidagi tugmani bosing 👉<a style='color:red' href=${resetLink}>Reset Link</a></h2>`
-   const to='jamshidxatamov0705@gmail.com'
+   const to='jamshidshamshod0705@gmail.com'
 
 
    await mail({to,subject,html})
 
    res.status(200).json({
       status:'success',
-      data:true
+      data:user
    })
 
    next()
@@ -181,14 +181,17 @@ const forgotPassword=catchError(async(req,res,next)=>{
 const resentpassword=catchError(async (req,res,next)=>{
    // 1 token olamiz
    const token =req.params.token
-   const tokenHash=crypto.createHash('sha256').update(token).digest('hax')
+ 
+   const tokenHash=crypto.createHash('sha256').update(token).digest('hex')
 
    // 2 token to'g'ri noto'g'riligini va vaqti o'tib ketmaganligini tekshiradi
+   
+
    const user=await User.findOne({
       resetTokenHash:tokenHash,
       resetTokenVaqt:{$gt:Date.now()}
    })
-
+ 
    if(!user){
       user.resetTokenHash=undefined
       user.resetTokenVaqt=undefined
@@ -209,8 +212,9 @@ const resentpassword=catchError(async (req,res,next)=>{
    user.passwordConfirm=req.body.passwordConfirm
    user.passwordChangedDate=Date.now()
 
-   user.resetTokenHash=undefined
-   user.resetTokenVaqt=undefined
+   console.log(user.resetTokenHash)
+   // user.resetTokenHash=undefined
+   // user.resetTokenVaqt=undefined
 
    await user.save()
 
@@ -226,4 +230,4 @@ const resentpassword=catchError(async (req,res,next)=>{
 
 })
 
-module.exports={signup,login,protect,role,forgotPassword,resentpassword}
+module.exports={signup,login,protect,role,forgotpassword,resentpassword}
