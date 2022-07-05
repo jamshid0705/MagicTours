@@ -124,7 +124,7 @@ const protect=catchError(async (req,res,next)=>{
    next()
 })
 
-///////////// role /////////////////
+///////////// middleware role /////////////////
 
 const role=(roles)=>{
    return catchError(async(req,res,next)=>{
@@ -155,14 +155,14 @@ const forgotpassword=catchError(async(req,res,next)=>{
    //3 yangi tokencha yaratamiz
    const token=user.resetHashToken()
 
-   console.log('222222',token)
+   
    await user.save({validateBeforeSave:false})
 
    //4 emailga jo'natamiz tokenchani
 
    const resetLink=`${req.protocol}://${req.get('host')}/api/v1/users/resentpassword/${token}`
    const subject="Reset password qilish uchun link !"
-   const html=`<h2>Reset password qilish uchun quyidagi tugmani bosing 👉<a style='color:red' href=${resetLink}>Reset Link</a></h2>`
+   const html=`<h2>Reset password qilish uchun quyidagi tugmani bosing 👉<a style='color:red' href='${resetLink}'>Reset Link</a></h2>`
    const to='jamshidshamshod0705@gmail.com'
 
 
