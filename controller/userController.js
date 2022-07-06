@@ -27,6 +27,8 @@ const User = require('../model/userModel')
 // }
 
 /// get
+
+
 const getAllUsers=async (req,res)=>{
   try{
 
