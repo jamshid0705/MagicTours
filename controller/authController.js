@@ -230,4 +230,4 @@ const resentpassword=catchError(async (req,res,next)=>{
 
 })
 
-module.exports={signup,login,protect,role,forgotpassword,resentpassword}
+module.exports={signup,login,protect,role,forgotpassword,resentpassword,createToken}

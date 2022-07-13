@@ -37,7 +37,8 @@ const UserSchema=new mongoose.Schema({
     minlength:[8,'8tadan kam bolmasligi kk'],
     validate:{validator:function(val){
       return this.password==val
-    },message:"Siz bir xil parol kiriting"} 
+    },message:"Siz bir xil parol kiriting"} ,
+    select:false
   },
   passwordChangedDate:{
     type:Date,
