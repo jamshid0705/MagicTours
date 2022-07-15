@@ -1,6 +1,35 @@
 const mongoose=require('mongoose')
 
 const tourSchema=new mongoose.Schema({
+  startLocation:{
+    description:{
+      type:String,
+      required:[true,'Siz description kiriting']
+    },
+    type:{
+      type:String,
+      default:'Point'
+    },
+    coordinates:Array,
+    address:String
+  },
+  locations:[
+     {
+      description:String,
+      type:{
+        type:String,
+        default:'Point'
+      },
+      coordinates:Array,
+      day:Number
+     }
+  ],
+  guides:[
+    {
+      type:mongoose.Schema.ObjectId,
+      ref:'users'
+    }
+  ],
   name: {
     type: String,
     required: [true, 'nameni kiriting'],

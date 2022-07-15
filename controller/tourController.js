@@ -58,7 +58,10 @@ const getAllTour=catchError(async (req,res)=>{
 // get id 
 const getIdTour=catchError(async (req,res)=>{
   
-    const data=await Tour.findById(req.params.id)
+    const data=await Tour.findById(req.params.id).populate({
+      path:'guides',
+      select:'-__v -_id'
+    })
     if(!data){
       throw new Error('Bunaqa id lik malumot topilmadi ... ')
     }
