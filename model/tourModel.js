@@ -98,7 +98,7 @@ tourSchema.virtual('chegirmadanKeyingiNarx').get(function(){
   return this.price-this.chegirma
 })
 
-/////////////////// Document middlaware ///////////////
+///////////////// Document middlaware ///////////////
 
 tourSchema.pre('save',function(next){
   this.name=this.name+' Xatamov Jamshid',
@@ -110,7 +110,7 @@ tourSchema.post('save',function(doc,next){
   next()
 })
 
-/////////////////// Query midlleware///////////////////
+///////////////// Query midlleware///////////////////
 
 tourSchema.pre('find',function(next){
   this.find({price:{$lte:997}})

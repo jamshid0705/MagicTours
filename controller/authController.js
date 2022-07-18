@@ -13,6 +13,16 @@ const createToken=(id)=>{
   return jwt.sign({id},process.env.JWT_SECRET,{expiresIn:process.env.JWT_EXPIRES_IN})
 }
 
+/////////// save cookie ///////////
+
+const cookieSave=(token,req,res)=>{
+  res.cookie('jwt',token,{
+   maxAge:1*24*60*60*1000,
+   httpOnly:true,
+   secure:req.protocol==='https' ? true:false,
+  })
+}
+
 // ////// find get ALL user ///////
 // const getAllUser=catchError(async(req,res)=>{
 //    const data=await User.find()
@@ -38,6 +48,8 @@ const signup=catchError(async (req,res)=>{
    })
 
   const token=createToken(user._id)
+
+  cookieSave(token,req,res)
 
    res.status(200).json({
     status:"success",
@@ -74,6 +86,8 @@ const login=catchError(async(req,res,next)=>{
    //4 JWT token berish
 
    const token=createToken(user._id)
+
+   cookieSave(token,req,res)
    //5 response qaytarish
    res.status(200).json({
       status:'success',
@@ -220,6 +234,8 @@ const resentpassword=catchError(async (req,res,next)=>{
 
    // 4 JWT token berish yangi
    const tokenJWT=createToken(user._id)
+
+   cookieSave(token,req,res)
 
    res.status(200).json({
       status:'success',

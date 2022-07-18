@@ -18,9 +18,12 @@ const UserSchema=new mongoose.Schema({
       return validator.isEmail(val)
     },message:'Siz togri email kiriting'}
   },
+  photo:{
+    type:String,
+  },
   role:{
     type:String,
-    enum:['user','guide','team-lead','admin'],
+    enum:['user','guide','lead-guide','team-lead','admin'],
     default:'user',
   },
   password:{
@@ -33,7 +36,7 @@ const UserSchema=new mongoose.Schema({
   },
   passwordConfirm:{
     type:String,
-    required:[true,'Siz password kiriting'],
+    required:[true,'Siz passwordConfirm kiriting'],
     minlength:[8,'8tadan kam bolmasligi kk'],
     validate:{validator:function(val){
       return this.password==val
